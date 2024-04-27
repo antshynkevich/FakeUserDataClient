@@ -1,3 +1,4 @@
+import 'bootstrap/dist/css/bootstrap.css';
 import { useEffect, useState } from 'react';
 import './App.css';
 

@@ -5,7 +5,7 @@
     text-align: center;
 }
 
-tr:nth-child(even) {
+/*tr:nth-child(even) {
     background: #F2F2F2;
 }
 
@@ -16,4 +16,4 @@ tr:nth-child(odd) {
 th, td {
     padding-left: 1rem;
     padding-right: 1rem;
-}
+}*/
