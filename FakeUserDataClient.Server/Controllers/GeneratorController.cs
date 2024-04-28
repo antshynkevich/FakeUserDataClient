@@ -1,4 +1,5 @@
-﻿using FakeUserDataClient.Server.Services;
+﻿using FakeUserDataClient.Server.Models;
+using FakeUserDataClient.Server.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FakeUserDataClient.Server.Controllers;
@@ -19,5 +20,15 @@ public class GeneratorController : ControllerBase
         IDataGenerator dataGenerator = _dataGeneratorCreator.ConfigureGenerator(page, region, seed);
         var people = dataGenerator.GetData(page, errors);
         return Ok(people);
+    }
+
+    // TODO: this method was created for debugging purpose. I must delete it before deployment.
+    [HttpGet]
+    public IEnumerable<FakeUser> GetSomeData()
+    {
+        var page = 1;
+        IDataGenerator dataGenerator = _dataGeneratorCreator.ConfigureGenerator(page, "en_US", 48);
+        var people = dataGenerator.GetData(page, 0);
+        return people;
     }
 }
