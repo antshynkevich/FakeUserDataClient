@@ -1,10 +1,26 @@
 import 'bootstrap/dist/css/bootstrap.css';
-import { useEffect, useState } from 'react';
-import './App.css';
+import React, { useState } from 'react';
+// import { useEffect, useState } from 'react';
+// import './App.css';
+// import Generator from './Generator';
 import Generator from './Generator';
-import FetchData from './FetchData';
+import MenuBar from './MenuBar';
 
 function App() {
+    const [dataFromChild, setDataFromChild] = useState({ region: '', seed: 0, errors: 0 });
+
+    const handleDataUpdate = (data) => {
+        setDataFromChild(data);
+    };
+
+
+    
+    // const [data, setData] = useState({
+    //     date: '',
+    //     number: 0,
+    //     sliderValue: 0
+    //   });
+
     //const [fakeRecords, setFakeRecords] = useState();
 
     //useEffect(() => {
@@ -55,8 +71,11 @@ function App() {
 
     return (
         <div>
-            {/* <Generator></Generator> */}
-            <FetchData></FetchData>
+            <MenuBar onDataUpdate={handleDataUpdate} />
+            <p>Region: {dataFromChild.region}</p>
+            <p>Seed: {dataFromChild.seed}</p>
+            <p>Errors: {dataFromChild.errors}</p>
+            <Generator region={dataFromChild.region} seed={dataFromChild.seed} errors={dataFromChild.errors} />
         </div>
     );
 }
