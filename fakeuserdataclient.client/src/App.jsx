@@ -72,9 +72,9 @@ function App() {
     return (
         <div>
             <MenuBar onDataUpdate={handleDataUpdate} />
-            <p>Region: {dataFromChild.region}</p>
+            {/* <p>Region: {dataFromChild.region}</p>
             <p>Seed: {dataFromChild.seed}</p>
-            <p>Errors: {dataFromChild.errors}</p>
+            <p>Errors: {dataFromChild.errors}</p> */}
             <Generator region={dataFromChild.region} seed={dataFromChild.seed} errors={dataFromChild.errors} />
         </div>
     );

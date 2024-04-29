@@ -68,15 +68,20 @@ function MenuBar({onDataUpdate}) {
                     <li><a className="dropdown-item" href="#">Something else here</a></li>
                 </ul>
                 </li> */}
+                {/* <span>Errors:</span> */}
+                <li>Errors: </li>
                 <li className="nav-item">
+                    <input type="range" className="form-range" min="0" max="10" step="0.25" value={errors} onChange={handleErrorsChange}/>
+                </li>
+
+                {/* <li className="nav-item">
                     <input type="range" className="form-range" />
-                </li>
+                </li> */}
                 <li className="nav-item">
-                    Erorrs:
-                    <input type="number" className="form-control" placeholder='Erorrs' value={errors} onChange={handleErrorsChange}/>
+                    <input type="number" className="form-control" placeholder='0' min="0" max="1000" step="0.25" value={errors} onChange={handleErrorsChange}/>
                 </li>
+                <li>Seed:</li>
                 <li className="nav-item">
-                    Seed:
                     <input type="number" className="form-control" placeholder="Seed" value={seed} onChange={handleSeedChange} />
                 </li>
             </ul>

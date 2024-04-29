@@ -8,7 +8,8 @@ function Generator(props) {
         const options = {
             method: 'GET'
         }
-        const result = await fetch(`https://localhost:7145/api/generator/params?page=1&region=${props.region}&seed=${props.seed}&errors=${props.errors}`, options)
+        const errorToLink  = Math.floor(props.errors * 100);
+        const result = await fetch(`https://localhost:7145/api/generator/params?page=1&region=${props.region}&seed=${props.seed}&errors=${errorToLink}`, options)
         if (result.ok) {
             const records = await result.json();
             setFakeRecords(records);
@@ -49,7 +50,7 @@ function Generator(props) {
 
     return (
         <div>
-            <h1>Hello from generator!</h1>
+            {/* <h1>Hello from generator!</h1>
             <div>
                 Data from MenuBar
                 <p>Region: {props.region}</p>
@@ -58,7 +59,7 @@ function Generator(props) {
             </div>
 
              {fakeRecords === undefined ? <h2>something went wrong</h2> :
-                <h2>all right! and array length = {fakeRecords.length}</h2>}
+                <h2>all right! and array length = {fakeRecords.length}</h2>} */}
                         
             <table className="table table-striped" aria-labelledby="tabelLabel">
                 <thead>
