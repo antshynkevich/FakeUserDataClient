@@ -17,18 +17,34 @@ public class GeneratorController : ControllerBase
     [HttpGet("params")]
     public IActionResult GetPeopleWithQueryParameters(int page, string region, int seed, int errors)
     {
-        IDataGenerator dataGenerator = _dataGeneratorCreator.ConfigureGenerator(page, region, seed);
-        var people = dataGenerator.GetData(page, errors);
-        return Ok(people);
-    }
+        if (page < 1)
+        {
+            page = 1;
+        }
 
-    // TODO: this method was created for debugging purpose. I must delete it before deployment.
-    [HttpGet]
-    public IEnumerable<FakeUser> GetSomeData()
-    {
-        var page = 1;
-        IDataGenerator dataGenerator = _dataGeneratorCreator.ConfigureGenerator(page, "en_US", 48);
-        var people = dataGenerator.GetData(page, 0);
-        return people;
+        if (seed < 0)
+        {
+            seed = 0;
+        }
+
+        if (errors < 0)
+        {
+            errors = 0;
+        }
+
+        if (errors % Constants.StepErrorProbabilityInPercent != 0)
+        {
+            errors = (errors / 25) * 25;
+        }
+
+        if (!Constants.SupportedRegions.Contains(region))
+        {
+            region = "en_US";
+        }
+
+        Console.WriteLine("page number equals " + page);
+        IDataGenerator dataGenerator = _dataGeneratorCreator.ConfigureGenerator(page, region, seed);
+        var fakeRecords = dataGenerator.GetData(page, errors);
+        return Ok(fakeRecords);
     }
 }

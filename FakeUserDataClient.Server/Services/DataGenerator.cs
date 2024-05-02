@@ -70,6 +70,11 @@ public class DataGenerator : IDataGenerator
 
     private string PutErrorToItemFileld(string fieldText, ErrorType errorType)
     {
+        if (fieldText.Length < 2)
+        {
+            errorType = ErrorType.InsertChar;
+        }
+
         var changedString = string.Empty;
         var randomIndex = Faker.Random.Int(0, fieldText.Length - 1);
         switch (errorType)
@@ -88,6 +93,8 @@ public class DataGenerator : IDataGenerator
                 changedString = fieldText[..adjacentIndex] + secondSymbol +
                     firstSymbol + fieldText[(adjacentIndex + 2)..];
                 break;
+            default:
+                return fieldText;
         }
 
         return changedString;

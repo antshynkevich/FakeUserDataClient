@@ -39,7 +39,7 @@ function MenuBar({onDataUpdate}) {
     };
 
     const handleErrorsChange = (event) => {
-        setErrors(event.target.value);
+        setErrors(event.target.value > 1000 ? 1000 : event.target.value);
     };
     
     return (

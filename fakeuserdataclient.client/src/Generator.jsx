@@ -3,44 +3,44 @@ import { useEffect, useState } from 'react';
 import InfiniteScroll from "react-infinite-scroll-component";
 import { CSVLink } from "react-csv";
 import PropTypes from 'prop-types';
+import Table from 'react-bootstrap/Table';
 
 function Generator(props) {
     const [fakeRecords, setFakeRecords] = useState([]);
     const [hasMore, setHasMore] = useState(true);
-    const [index, setIndex] = useState(1);
+    const [index, setIndex] = useState(2);
 
     const getRecords = async () => {
         const options = {
             method: 'GET'
         }
-        const errorToLink = Math.floor(props.errors * 100);
-        const result = await fetch(`https://localhost:7145/api/generator/params?page=1&region=${props.region}&seed=${props.seed}&errors=${errorToLink}`, options);
+        const errorToLink = Math.floor((props.errors > 1000 ? 1000 : props.errors) * 100);
+        const result = await fetch(`http://www.fakeuserdataapi.somee.com/api/generator/params?page=1&region=${props.region}&seed=${props.seed}&errors=${errorToLink}`, options);
         if (result.ok) {
             const records = await result.json();
             setFakeRecords(records);
-            setIndex((prevIndex) => prevIndex + 1);
         }
     };
 
     //http://www.fakeuserdataapi.somee.com/api/
-    //https://localhost:7145/api/generator/
+    //https://localhost:7145/api/
 
     const getMoreRecords = async () => {
         const options = {
             method: 'GET'
         }
-        const errorToLink = Math.floor(props.errors * 100);
-        const result = await fetch(`https://localhost:7145/api/generator/params?page=${index}&region=${props.region}&seed=${props.seed}&errors=${errorToLink}`, options);
+        const errorToLink = Math.floor((props.errors > 1000 ? 1000 : props.errors) * 100);
+        const result = await fetch(`http://www.fakeuserdataapi.somee.com/api/generator/params?page=${index}&region=${props.region}&seed=${props.seed}&errors=${errorToLink}`, options);
         if (result.ok) {
             const records = await result.json();
             setFakeRecords((prevItems) => [...prevItems, ...records]);
             records.length > 0 ? setHasMore(true) : setHasMore(false);
-            setIndex((prevIndex) => prevIndex + 1);
+            setIndex(index + 1);
         } 
     };
 
     useEffect(() => {
-        setIndex(1);
+        setIndex(2);
         getRecords();
     }, [props]);
 
@@ -60,13 +60,12 @@ function Generator(props) {
                     Export to CSV file
                 </CSVLink>
             </div>
-             
             <InfiniteScroll
                 dataLength={fakeRecords.length}
                 next={getMoreRecords}
                 hasMore={hasMore}
             >
-                <table className="table table-striped" aria-labelledby="tabelLabel">
+                <Table striped bordered hover variant='light'>
                     <thead>
                         <tr>
                             <th>#</th>
@@ -87,7 +86,7 @@ function Generator(props) {
                             </tr>
                         )}
                     </tbody>
-                </table>
+                </Table>
             </InfiniteScroll>
         </div> 
     )
@@ -98,4 +97,5 @@ Generator.propTypes = {
     errors: PropTypes.number,
     region: PropTypes.string
 }
+
 export default Generator;
