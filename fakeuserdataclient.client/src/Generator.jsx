@@ -1,88 +1,101 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import { useEffect, useState } from 'react';
+import InfiniteScroll from "react-infinite-scroll-component";
+import { CSVLink } from "react-csv";
+import PropTypes from 'prop-types';
 
 function Generator(props) {
     const [fakeRecords, setFakeRecords] = useState([]);
+    const [hasMore, setHasMore] = useState(true);
+    const [index, setIndex] = useState(1);
 
     const getRecords = async () => {
         const options = {
             method: 'GET'
         }
-        const errorToLink  = Math.floor(props.errors * 100);
-        const result = await fetch(`https://localhost:7145/api/generator/params?page=1&region=${props.region}&seed=${props.seed}&errors=${errorToLink}`, options)
+        const errorToLink = Math.floor(props.errors * 100);
+        const result = await fetch(`https://localhost:7145/api/generator/params?page=1&region=${props.region}&seed=${props.seed}&errors=${errorToLink}`, options);
         if (result.ok) {
             const records = await result.json();
             setFakeRecords(records);
-            // console.table(records);
-            // return records;
+            setIndex((prevIndex) => prevIndex + 1);
         }
-    }
+    };
+
+    //http://www.fakeuserdataapi.somee.com/api/
+    //https://localhost:7145/api/generator/
+
+    const getMoreRecords = async () => {
+        const options = {
+            method: 'GET'
+        }
+        const errorToLink = Math.floor(props.errors * 100);
+        const result = await fetch(`https://localhost:7145/api/generator/params?page=${index}&region=${props.region}&seed=${props.seed}&errors=${errorToLink}`, options);
+        if (result.ok) {
+            const records = await result.json();
+            setFakeRecords((prevItems) => [...prevItems, ...records]);
+            records.length > 0 ? setHasMore(true) : setHasMore(false);
+            setIndex((prevIndex) => prevIndex + 1);
+        } 
+    };
 
     useEffect(() => {
+        setIndex(1);
         getRecords();
     }, [props]);
 
-    // function fetchFakeUserData() {
-    //     try{
-    //         const response = fetch('https://localhost:7145/api/generator');
-    //         // if (!response.ok){
-    //         //     throw new Error('Could not fetch resource');
-    //         // }
+    const headers = [
+        { label: "Id", key: "id" },
+        { label: "Full name", key: "fullName" },
+        { label: "Post Address", key: "streetAddress" },
+        { label: "Phone number", key: "phone" }
+    ];
 
-    //         const data = response.json;
-    //         console.log(data);
-    //         setFakeRecords(data);
-            
-    //     }
-    //     catch(error){
-    //         console.error(error);
-    //     }
-
-    //     //const response = await fetch('https://localhost:7145/api/generator')
-    //     //    .then(response => response.json())
-    //     //    .then(data => console.log(data[0]))
-    //     //    .catch(error => console.error(error));
-    //     //const data = await response.json();
-    //     //setFakeRecords(data);
-    // }
-
-    // fetchFakeUserData();
+    let numberInTable = 0;
 
     return (
         <div>
-            {/* <h1>Hello from generator!</h1>
-            <div>
-                Data from MenuBar
-                <p>Region: {props.region}</p>
-                <p>Seed: {props.seed}</p>
-                <p>Errors: {props.errors}</p>
+            <div className="d-grid my-1 mx-2">
+                <CSVLink className='btn btn-outline-success' data={fakeRecords} headers={headers}>
+                    Export to CSV file
+                </CSVLink>
             </div>
-
-             {fakeRecords === undefined ? <h2>something went wrong</h2> :
-                <h2>all right! and array length = {fakeRecords.length}</h2>} */}
-                        
-            <table className="table table-striped" aria-labelledby="tabelLabel">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>FULL NAME</th>
-                        <th>STREET ADDRESS</th>
-                        <th>PHONE</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {fakeRecords.map(record =>
-                        <tr key={record.id}>
-                            <td>{record.id}</td>
-                            <td>{record.fullName}</td>
-                            <td>{record.streetAddress}</td>
-                            <td>{record.phone}</td>
+             
+            <InfiniteScroll
+                dataLength={fakeRecords.length}
+                next={getMoreRecords}
+                hasMore={hasMore}
+            >
+                <table className="table table-striped" aria-labelledby="tabelLabel">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>ID</th>
+                            <th>FULL NAME</th>
+                            <th>STREET ADDRESS</th>
+                            <th>PHONE</th>
                         </tr>
-                    )}
-                </tbody>
-            </table>
-        </div>
+                    </thead>
+                    <tbody>
+                        {fakeRecords.map(record =>
+                            <tr key={record.id}>
+                                <td>{ ++numberInTable }</td>
+                                <td>{record.id}</td>
+                                <td>{record.fullName}</td>
+                                <td>{record.streetAddress}</td>
+                                <td>{record.phone}</td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+            </InfiniteScroll>
+        </div> 
     )
 }
 
-export default Generator
+Generator.propTypes = {
+    seed: PropTypes.number,
+    errors: PropTypes.number,
+    region: PropTypes.string
+}
+export default Generator;
